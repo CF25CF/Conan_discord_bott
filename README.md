@@ -1,7 +1,7 @@
 # 🚀 Discord Bot – Future Vision  
 
 This bot is still in an early stage and doesn’t have many features yet, but the main goal is to go **beyond standard Discord bots**.  
-Instead of only offering moderation or music, the focus is on **intelligent and practical features** powered by AI and automation.  
+Instead of only offering moderation, music, and small games, the focus is on **intelligent and practical features** powered by AI and automation.
 
 ## 🌟 Planned Features  
 

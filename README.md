@@ -15,7 +15,7 @@ Instead of only offering moderation, music, and small games, the focus is on **i
 - ⚖️ **Decision Matrix** – Make smarter choices with AI-assisted decision tools.  
 - 🧭 **Command Helper** – Describe what you want, and the bot suggests the right `/command`.  
 
------
+---
 
 ✨ This project started mainly as a **learning experience** in Python and Discord bot development.  
 It is still in progress, but the long-term vision is to build a bot that combines **AI assistance, automation, and data analysis** in one place.  

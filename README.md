@@ -7,7 +7,7 @@ Instead of only offering moderation, music, and small games, the focus is on **i
 
 - 📰 **Summarize News** – Get quick summaries of the latest news.  
 - 🔗 **Summarize Links, Videos, and PDFs** – Quickly extract key insights from shared content.  
-- 🌍 **Website Alerts** – Receive notifications when a website changes.  
+- 🌍 **Website Monitoring** – Get alerts when specific data (such as prices or text) on a website changes.  
 - 🎙️ **Voice Chat Listener** – Bot listens in VC and uses GPT to create summaries (with timestamps).  
 - 📚 **Summarize Wikipedia Articles** – Turn long articles into short, clear explanations.  
 - 📊 **Excel File Analysis** – Upload and analyze spreadsheets directly.  
@@ -19,4 +19,3 @@ Instead of only offering moderation, music, and small games, the focus is on **i
 
 ✨ This project started mainly as a **learning experience** in Python and Discord bot development.  
 It is still in progress, but the long-term vision is to build a bot that combines **AI assistance, automation, and data analysis** in one place.  
-Das wirkt:

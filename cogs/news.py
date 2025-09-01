@@ -14,6 +14,8 @@ import discord
 NEWS_CHANNEL_ID = os.getenv("NEWS_CHANNEL_ID")
 TAGESSCHAU_API_URL = "https://www.tagesschau.de/api2u/news/"
 WIRTSCHAFT_RESSORT = "wirtschaft"
+INLAND_RESSORT = "inland"
+AUSLAND_RESSORT = "ausland"
 
 
 OPENAI_API_KEY = os.getenv("OPEN_AI_KEY_2")
@@ -26,6 +28,44 @@ NUMMER_EMOJIS = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]
 
 DAILY_NEWS_HOUR = 7
 DAILY_NEWS_MINUTE = 59
+
+# ================== Service Funktionen =================
+
+def top5_summarized_article(ressort,ressort_emoji, ressort_name):
+    yesterday_date = get_yesterday_date()
+
+    all_articles = get_all_article(yesterday_date, ressort)
+
+    top5_articles = select_top5_articles(all_articles)
+
+    for article in top5_articles:
+        content = get_article_content(article["api_link"])
+        summary = summarize_article([content])
+        article["summary"] = summary[0]
+
+    embed = news_embed(ressort_emoji, ressort_name, get_yesterday_date(), top5_articles)
+
+    return embed
+
+
+def top5_summarized_articles_2ressorts(ressort1, ressort2, ressort_emoji, resort_name):
+    yesterday_date = get_yesterday_date()
+
+    articles_ressort1 = get_all_article(yesterday_date, ressort1)
+    articles_ressort2 = get_all_article(yesterday_date, ressort2)
+
+    all_articles = articles_ressort1 + articles_ressort2
+
+    top5_articles = select_top5_articles(all_articles)
+
+    for article in top5_articles:
+        content = get_article_content(article["api_link"])
+        summary = summarize_article([content])
+        article["summary"] = summary[0]
+
+    embed = news_embed(ressort_emoji, resort_name, get_yesterday_date(), top5_articles)
+
+    return embed
 
 # ================== Helper Funktionen ==================
 def get_today_date():
@@ -104,7 +144,7 @@ def get_article_content(api_url):
 
 def summarize_article(articles):
     prompt = f"""
-    Erstelle für jeden Artikel eine kurze, prägnante Zusammenfassung in 3 Sätzen.
+    Erstelle für jeden Artikel eine kurze Zusammenfassung in 3 Sätzen.
     Antworte mit einem JSON-Objekt mit dem Key "summary" und einem Array von Strings.
 
     Artikel:
@@ -142,13 +182,13 @@ def create_embed_field(index, article):
     if len(summary) > max_length:
         summary = summary[:max_length - 1] + "…"
 
-    field_value = f"{summary}{link_text}"
+    field_value = f"{summary}{link_text}\n\u200b"
 
     return field_name, field_value
 
-def news_embed(date, news):
+def news_embed(ressort_emoji, ressort, date, news):
     embed = discord.Embed(
-        title=f"📰 Top-5 Wirtschaftsnachrichten vom {date.strftime('%d.%m.%Y')}",
+        title=f"{ressort_emoji} Top-5 {ressort} vom {date.strftime('%d.%m.%Y')}",
         description="☕ Guten Morgen, hier sind die News von gestern",
         color=discord.Color.blue()
     )
@@ -170,46 +210,19 @@ class NewsCog(commands.Cog):
     async def on_ready(self):
         self.daily_news.start()
 
-    @discord.slash_command(
-        name="news",
-        description="Zeigt die Top-5 Wirtschaftsnachrichten von heute an"
-    )
-    async def news_command(self, ctx):
-        await ctx.defer()
-
-        today_date = get_today_date()
-
-        all_articles = get_all_article(today_date, WIRTSCHAFT_RESSORT)
-
-        top5_articles = select_top5_articles(all_articles)
-
-        for article in top5_articles:
-            content = get_article_content(article["api_link"])
-            summary = summarize_article([content])
-            article["summary"] = summary[0]
-
-        embed = news_embed(get_today_date(), top5_articles)
-        await ctx.followup.send(embed=embed)
-
     @tasks.loop(minutes=1)
     async def daily_news(self):
         now = datetime.now()
 
         if now.hour == DAILY_NEWS_HOUR and now.minute == DAILY_NEWS_MINUTE:
             channel = self.bot.get_channel(int(NEWS_CHANNEL_ID))
-            date_yesterday = get_yesterday_date()
 
-            all_articles = get_all_article(date_yesterday, WIRTSCHAFT_RESSORT)
-
-            top5_articles = select_top5_articles(all_articles)
-
-            for article in top5_articles:
-                content = get_article_content(article["api_link"])
-                summary = summarize_article([content])
-                article["summary"] = summary[0]
-
-            embed = news_embed(get_yesterday_date(), top5_articles)
+            embed = top5_summarized_article(WIRTSCHAFT_RESSORT, "📈", "Wirtschaftsnachrichten")
             await channel.send(embed=embed)
+
+            embed_2 = top5_summarized_articles_2ressorts(INLAND_RESSORT, AUSLAND_RESSORT, "👨‍💼", "Politiknachrichten")
+            await channel.send(embed=embed_2)
+
 
 # ================== Setup Funktion ==================
 def setup(bot):
